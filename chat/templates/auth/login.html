@@ -1,0 +1,26 @@
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+
+
+<h1>Login Page</h1>
+
+{% if wrongPassword %}
+  <h3>Falsches Passwort</h3>
+{% endif %}
+
+<form action="/login/" method="POST">
+    {% csrf_token %}
+    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="text" id="sample31" name="username">
+        <label class="mdl-textfield__label" for="sample31">User</label>
+      </div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="password" id="sample3" name="password">
+        <label class="mdl-textfield__label" for="sample3">Passwort</label>
+      </div>
+    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+        Login
+    </button>
+</form>

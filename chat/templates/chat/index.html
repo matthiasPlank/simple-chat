@@ -22,7 +22,12 @@
   <header class="mdl-layout__header">
     <div class="mdl-layout__header-row">
       <!-- Title -->
+      {% if request.user.is_authenticated %}
       <span class="mdl-layout-title">Welcome {{request.user.first_name}}</span>
+      {% else %}
+      <span class="mdl-layout-title">Welcome, please log in</span>
+      {% endif %}
+
       <!-- Add spacer, to align navigation to the right -->
       <div class="mdl-layout-spacer"></div>
       <!-- Navigation. We hide it in small screens. -->
@@ -62,11 +67,17 @@
           <input class="mdl-textfield__input" name="textmessage" type="text" id="sample3">
           <label class="mdl-textfield__label" for="sample3">Text...</label>
         </div>
-        <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
           send
         </button>
       </form>
 
+
+      {% else %}
+      <div>
+        <h1>You are not logged in!</h1> 
+        <p>You can login <a href="/login/">here</a>!</p>
+      </div>
       {% endif %}
 
     </div>
