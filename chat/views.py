@@ -20,13 +20,14 @@ def index(request):
 
 
 def login_view(request): 
+    redirect = request.GET.get('next')
     if request.method == 'POST':
         print("Received Data:" + request.POST['username'] + request.POST['password'])
         user = authenticate(username=request.POST['username'], password=request.POST['password'])
         if user: 
             login(request, user)
-            return HttpResponseRedirect('/chat/')
+            return HttpResponseRedirect(request.POST.get('redirect'))
         else: 
             print("Wroing password")
-            return render(request, 'auth/login.html', {'wrongPassword' : True})
-    return render(request, 'auth/login.html')
+            return render(request, 'auth/login.html', {'wrongPassword' : True , 'redirect':redirect})
+    return render(request, 'auth/login.html',  {'redirect':redirect})
