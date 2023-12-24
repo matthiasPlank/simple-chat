@@ -7,7 +7,6 @@ from django.contrib.auth.models import User
 
 import re
 
-
 from chat.models import Message, Chat
 
 # Create your views here.
@@ -15,7 +14,6 @@ from chat.models import Message, Chat
 def index(request): 
     print(request.method)
     if request.method == 'POST':
-        print("Received Data:" + request.POST['textmessage'])
         myChat = Chat.objects.get(id=1)
         Message.objects.create(text=request.POST['textmessage'] , chat=myChat , author=request.user , receiver=request.user); 
     chatMessages = Message.objects.filter(chat__id=1)
@@ -47,6 +45,9 @@ def register_view(request):
         if passwordCheck: 
             username = getUsernameFromEmail(request.POST['email'])
             user = User.objects.create_user(username, request.POST['email'], request.POST['password'])
+            user.last_name = request.POST['lastName']; 
+            user.first_name = request.POST['firstName']; 
+            user.save()
             if user: 
                 login(request, user)
                 return HttpResponseRedirect("/chat/")
@@ -58,7 +59,6 @@ def register_view(request):
 
 
 def getUsernameFromEmail(username): 
-    
     subIndex = username.find('@')
     username = username[0:subIndex]; 
     username = re.sub('[\W_]+', '', username)
