@@ -3,6 +3,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+
+import re
 
 
 from chat.models import Message, Chat
@@ -34,5 +37,29 @@ def login_view(request):
 
 
 def register_view(request):
-     return render(request, 'auth/register.html')
 
+    if request.method == 'POST':
+        print("Received Data:" + request.POST['email'] + request.POST['password'] + request.POST['confirmPassword'])
+        if request.POST['password'] == request.POST['confirmPassword']:
+            passwordCheck = True; 
+        else:
+            passwordCheck = False;
+        if passwordCheck: 
+            username = getUsernameFromEmail(request.POST['email'])
+            user = User.objects.create_user(username, request.POST['email'], request.POST['password'])
+            if user: 
+                login(request, user)
+                return HttpResponseRedirect("/chat/")
+        else: 
+            return render(request, 'auth/register.html', {'wrongPassword': not passwordCheck })
+    return render(request, 'auth/register.html')
+
+
+
+
+def getUsernameFromEmail(username): 
+    
+    subIndex = username.find('@')
+    username = username[0:subIndex]; 
+    username = re.sub('[\W_]+', '', username)
+    return username

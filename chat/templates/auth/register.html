@@ -2,20 +2,23 @@
 
 <h1>Register Page</h1>
 
-<form action="/login/" method="POST" autocomplete="off">
+{% if wrongPassword %}
+    <p class="red-formvalidation-text">Passwords are not the same</p>
+{% endif%}
+
+<form action="/register/" method="POST" autocomplete="off">
     {% csrf_token %}
-    <!--  <input type="hidden" name="redirect" value="{{redirect}}"> -->
     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="text" id="sample31" name="username" autocomplete="false">
-        <label class="mdl-textfield__label" for="sample31">User</label>
+        <input class="mdl-textfield__input" type="email" id="sample2" name="email" autocomplete="false" required>
+        <label class="mdl-textfield__label" for="sample2">E-Mail</label>
     </div>
     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="password" id="sample3" name="password" autocomplete="off">
+        <input class="mdl-textfield__input" type="password" id="sample3" name="password" autocomplete="off" required>
         <label class="mdl-textfield__label" for="sample3">Password</label>
     </div>
     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="password" id="sample3" name="password" autocomplete="off">
-        <label class="mdl-textfield__label" for="sample3">Confirm password</label>
+        <input class="mdl-textfield__input" type="password" id="sample4" name="confirmPassword" autocomplete="off" required>
+        <label class="mdl-textfield__label" for="sample4">Confirm password</label>
     </div>
     <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
         Login

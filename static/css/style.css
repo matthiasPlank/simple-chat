@@ -10,3 +10,8 @@
     padding: 12px;
     color: lightgray;
 }
+.red-formvalidation-text{
+    color: red;
+    font-size: 12px;
+    font-weight: bold;
+}
