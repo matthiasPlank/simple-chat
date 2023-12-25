@@ -1,11 +1,9 @@
 .page-content {
     padding: 100px 100px;
 }
-
 .gray {
     color: gray;
 }
-
 .author {
     padding: 12px;
     color: lightgray;
@@ -15,3 +13,7 @@
     font-size: 12px;
     font-weight: bold;
 }
+
+
+
+/*  CHAT  */ 

@@ -3,21 +3,74 @@
 
 {% if request.user.is_authenticated %}
 
-{% for message in messages %}
-<div>
-  <span class="gray">[{{message.created_at}}]</span>
-  <span class="author">{{message.author.first_name}}:</span>
-  <i>{{message.text}}</i>
+<div id="messageContainer">
+  {% for message in messages %}
+  <div>
+    <span class="gray">[{{message.created_at}}]</span>
+    <span class="author">{{message.author.first_name}}:</span>
+    <i>{{message.text}}</i>
+  </div>
+  {% endfor %}
 </div>
-{% endfor %}
 
-<form action="/chat/" method="post">
+<script>
+  async function sendMessage() {
+    let fd = new FormData();
+    let token = '{{ csrf_token }}';
+
+    fd.append('textmessage', textmessage.value);
+    fd.append('csrfmiddlewaretoken', token);
+    try {
+      messageContainer.innerHTML += `
+          <div id="sendedMessage">
+            <span class="gray">${formatedDate(new Date())}</span>
+            <span class="author">{{ request.user.first_name }}</span>
+            <i class="gray">${textmessage.value}</i>
+        </div>
+      `
+      response = await fetch('/chat/', {
+        body: fd,
+        method: 'POST'
+      });
+      json = await response.json(); 
+      console.log(JSON.parse(json)); 
+      console.log("Successfull");
+      document.getElementById("sendedMessage").remove(); 
+      messageContainer.innerHTML += `
+            <div>
+              <span class="gray">${formatedDate(JSON.parse(json).fields.created_at)}</span> 
+              <span class="author">{{ request.user.first_name }}</span>
+              <i>${JSON.parse(json).fields.text}</i>
+          </div>
+        ` 
+    }
+    catch (error) {
+      console.error(error);
+    }
+  }
+
+  function formatedDate(date){
+    const months = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  ];
+
+  const currentDate = new Date(date);
+  const month = months[currentDate.getMonth()];
+  const day = currentDate.getDate();
+  const year = currentDate.getFullYear();
+
+  return `[${month}. ${day}, ${year}]`;
+  }
+</script>
+
+<form onsubmit="sendMessage(); return false;">
   {% csrf_token %}
   <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-    <input class="mdl-textfield__input" name="textmessage" type="text" id="sample3">
+    <input class="mdl-textfield__input" name="textmessage" type="text" id="textmessage">
     <label class="mdl-textfield__label" for="sample3">Text...</label>
   </div>
-  <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+  <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
     send
   </button>
 </form>

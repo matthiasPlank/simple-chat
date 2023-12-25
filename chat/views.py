@@ -1,25 +1,31 @@
 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-
+from django.core import serializers
 import re
-
 from chat.models import Message, Chat
+from django_simple_chat_app.chat.functions import getUsernameFromEmail
 
-# Create your views here.
+"""
+Chat View 
+"""
 @login_required(login_url='/login/')
 def index(request): 
-    print(request.method)
     if request.method == 'POST':
         myChat = Chat.objects.get(id=1)
-        Message.objects.create(text=request.POST['textmessage'] , chat=myChat , author=request.user , receiver=request.user); 
+        newMessage = Message.objects.create(text=request.POST['textmessage'] , chat=myChat , author=request.user , receiver=request.user); 
+        serializedObject = serializers.serialize('json' , [newMessage]); 
+        return JsonResponse(serializedObject[1:-1], safe=False)
     chatMessages = Message.objects.filter(chat__id=1)
     return render(request, 'chat/index.html' , {'messages':chatMessages})
 
 
+"""
+Login View 
+"""
 def login_view(request): 
     redirect = request.GET.get('next')
     if request.method == 'POST':
@@ -34,10 +40,11 @@ def login_view(request):
     return render(request, 'auth/login.html',  {'redirect':redirect})
 
 
+"""
+Register View 
+"""
 def register_view(request):
-
     if request.method == 'POST':
-        print("Received Data:" + request.POST['email'] + request.POST['password'] + request.POST['confirmPassword'])
         if request.POST['password'] == request.POST['confirmPassword']:
             passwordCheck = True; 
         else:
@@ -54,12 +61,3 @@ def register_view(request):
         else: 
             return render(request, 'auth/register.html', {'wrongPassword': not passwordCheck })
     return render(request, 'auth/register.html')
-
-
-
-
-def getUsernameFromEmail(username): 
-    subIndex = username.find('@')
-    username = username[0:subIndex]; 
-    username = re.sub('[\W_]+', '', username)
-    return username
