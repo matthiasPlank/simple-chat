@@ -1,18 +1,5 @@
 {% extends "base.html"%}
 {% block content %}
-
-{% if request.user.is_authenticated %}
-
-<div id="messageContainer">
-  {% for message in messages %}
-  <div>
-    <span class="gray">[{{message.created_at}}]</span>
-    <span class="author">{{message.author.first_name}}:</span>
-    <i>{{message.text}}</i>
-  </div>
-  {% endfor %}
-</div>
-
 <script>
   async function sendMessage() {
     let fd = new FormData();
@@ -64,19 +51,50 @@
   }
 </script>
 
-<form onsubmit="sendMessage(); return false;">
-  {% csrf_token %}
-  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-    <input class="mdl-textfield__input" name="textmessage" type="text" id="textmessage">
-    <label class="mdl-textfield__label" for="sample3">Text...</label>
+{% if request.user.is_authenticated %}
+
+<div id="chatContainer">
+  <div id="messageContainer">
+    {% for message in messages %}
+    {% if message.author == request.user %}
+    <div class="myMessage">
+      <div class="messageContentContainer">
+        <span class="author">{{message.author.first_name}}:</span>
+        <div class="messageText message"><i>{{message.text}}</i></div>
+        <span class="gray">[{{message.created_at}}]</span>
+      </div>
+    </div>
+    {% else %}
+    <div class="otherMessage">
+      <div class="messageContentContainer">
+        <span class="author">{{message.author.first_name}}:</span>
+        <div class="messageTextOther message"><i>{{message.text}}</i></div>
+        <span class="gray">[{{message.created_at}}]</span>
+      </div>
+    </div>
+    {% endif %}
+    {% endfor %}
   </div>
-  <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-    send
-  </button>
-</form>
+  
 
 
-{% else %}
+
+  <div id="messageInputContainer">
+    <form onsubmit="sendMessage(); return false;">
+      {% csrf_token %}
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" name="textmessage" type="text" id="textmessage">
+        <label class="mdl-textfield__label" for="sample3">Text...</label>
+      </div>
+      <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+        send
+      </button>
+    </form>
+  </div>
+</div>
+  
+  
+  {% else %}
 <div>
   <h1>You are not logged in!</h1>
   <p>You can login <a href="/login/">here</a>!</p>
@@ -84,3 +102,6 @@
 {% endif %}
 
 {% endblock%}
+
+
+<!-- ************************************************************************ -->

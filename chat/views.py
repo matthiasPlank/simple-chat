@@ -5,9 +5,8 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core import serializers
-import re
 from chat.models import Message, Chat
-from django_simple_chat_app.chat.functions import getUsernameFromEmail
+from chat.functions import getUsernameFromEmail
 
 """
 Chat View 

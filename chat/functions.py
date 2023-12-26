@@ -1,3 +1,5 @@
+import re
+
 def getUsernameFromEmail(username): 
     subIndex = username.find('@')
     username = username[0:subIndex]; 
