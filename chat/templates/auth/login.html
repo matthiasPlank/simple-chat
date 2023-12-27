@@ -1,26 +1,81 @@
-{% extends "base.html"%} {% block content %}
+{% extends "base.html"%} 
+{% block content %}
 
 <h1>Login Page</h1>
 
-{% if wrongPassword %}
-  <h3>Falsches Passwort</h3>
-{% endif %}
+<script>
 
-<form action="/login/" method="POST">
+async function login(){
+  console.log("Send Form");
+
+  let fd = new FormData();
+  let token = '{{ csrf_token }}';
+  fd.append('username', username.value);
+  fd.append('password', password.value);
+  fd.append('csrfmiddlewaretoken', token);
+  try {
+    document.getElementById("username").style.display = "none"; 
+    document.getElementById("password").style.display = "none"; 
+    document.getElementById("passwordLabel").style.display = "none"; 
+    document.getElementById("usernameLabel").style.display = "none"; 
+    document.getElementById("loginButton").style.display = "none"; 
+    document.getElementById("loadingSpinner").style.display = "block"; 
+    
+    response = await fetch('/login/', {
+      body: fd,
+      method: 'POST'
+    });
+    console.log(response); 
+    document.getElementById("username").style.display = "block"; 
+    document.getElementById("password").style.display = "block"; 
+    document.getElementById("passwordLabel").style.display = "block"; 
+    document.getElementById("usernameLabel").style.display = "block"; 
+    document.getElementById("loginButton").style.display = "block"; 
+    document.getElementById("loadingSpinner").style.display = "none"; 
+
+    if (response.redirected) {
+      window.location.href = response.url
+    }
+    else{
+      json = await response.json(); 
+      console.log(json.wrongPassword); 
+      if(json.wrongPassword){
+        document.getElementById("wrongPasswordContainer").style.display = "block";
+      }
+      else{
+        document.getElementById("wrongPasswordContainer").style.display = "none";
+      }
+    } 
+  }
+  catch(error){
+    console.error(error); 
+  }
+}
+
+</script>
+
+<div id="wrongPasswordContainer" style="display: none;" class="red-formvalidation-text">
+  <span>Falsches Passwort</span>
+</div>
+
+
+<form onsubmit="login(); return false;">
     {% csrf_token %}
     <input type="hidden" name="redirect" value="{{redirect}}">
     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="text" id="sample31" name="username">
-        <label class="mdl-textfield__label" for="sample31">User</label>
+        <input class="mdl-textfield__input" type="text" id="username" name="username">
+        <label class="mdl-textfield__label" for="sample31" id="usernameLabel">User</label>
       </div>
       <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="password" id="sample3" name="password">
-        <label class="mdl-textfield__label" for="sample3">Passwort</label>
+        <input class="mdl-textfield__input" type="password" id="password" name="password">
+        <label class="mdl-textfield__label" for="sample3" id="passwordLabel">Passwort</label>
       </div>
-    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+    <button id="loginButton" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
         Login
     </button>
 </form>
+
+<div id="loadingSpinner" style="display: none;" class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 
 <p>Not register yet? Create a new Account <a href="/register/">here</a></p>
 
