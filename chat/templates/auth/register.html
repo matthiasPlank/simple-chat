@@ -1,38 +1,88 @@
 {% extends "base.html"%} {% block content %}
+<div id="registerContainer">
+    <h1>Register Page</h1>
 
-<h1>Register Page</h1>
+    <script>
 
-{% if wrongPassword %}
-    <p class="red-formvalidation-text">Passwords are not the same</p>
-{% endif%}
+        async function register(){
+          console.log("Send Form");
+        
+          let fd = new FormData();
+          let token = '{{ csrf_token }}';
+          fd.append('email', email.value);
+          fd.append('firstName', firstName.value);
+          fd.append('lastName', lastName.value);
+          fd.append('password', password.value);
+          fd.append('confirmPassword', confirmPassword.value);
+          fd.append('csrfmiddlewaretoken', token);
+          try {
+            document.getElementById("registerForm").style.display = "none"; 
+            document.getElementById("loadingSpinner").style.display = "block"; 
+  
+            response = await fetch('/register/', {
+              body: fd,
+              method: 'POST'
+            });
+            console.log(response); 
+            document.getElementById("registerForm").style.display = "block"; 
+            document.getElementById("loadingSpinner").style.display = "none"; 
+        
+            if (response.redirected) {
+              window.location.href = response.url
+            }
+            else{
+              json = await response.json(); 
+              console.log(json.wrongPassword); 
+              if(json.wrongPassword){
+                document.getElementById("wrongPasswordContainer").style.display = "block";
+                document.getElementById("errorMessage").innerHTML = json.errorMessage; 
+              }
+              else{
+                document.getElementById("wrongPasswordContainer").style.display = "none";
+              }
+            } 
+          }
+          catch(error){
+            console.error(error); 
+          }
+        }
+        </script>
 
-<form action="/register/" method="POST" autocomplete="off">
-    {% csrf_token %}
-    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="email" id="sample2" name="email" autocomplete="false" required>
-        <label class="mdl-textfield__label" for="sample2">E-Mail</label>
+    <div id="wrongPasswordContainer" style="display: none;" class="red-formvalidation-text">
+        <p id="errorMessage" class="red-formvalidation-text">Passwords are not the same</p>
     </div>
-    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="text" id="firstName" name="firstName" autocomplete="false">
-        <label class="mdl-textfield__label" for="firstName">Fistname</label>
-    </div>
-    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="text" id="lastName" name="lastName" autocomplete="false">
-        <label class="mdl-textfield__label" for="lastName">Lastname</label>
-    </div>
-    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="password" id="sample3" name="password" autocomplete="off" required>
-        <label class="mdl-textfield__label" for="sample3">Password</label>
-    </div>
-    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="password" id="sample4" name="confirmPassword" autocomplete="off" required>
-        <label class="mdl-textfield__label" for="sample4">Confirm password</label>
-    </div>
-    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-        Login
-    </button>
-</form>
 
+    <form onsubmit="register(); return false;" autocomplete="off" id="registerForm">
+        {% csrf_token %}
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="email" id="email" name="email" autocomplete="false" required>
+            <label class="mdl-textfield__label" for="sample2">E-Mail</label>
+        </div>
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="firstName" name="firstName" autocomplete="false">
+            <label class="mdl-textfield__label" for="firstName">Fistname</label>
+        </div>
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="lastName" name="lastName" autocomplete="false">
+            <label class="mdl-textfield__label" for="lastName">Lastname</label>
+        </div>
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="password" id="password" name="password" autocomplete="off"
+                required>
+            <label class="mdl-textfield__label" for="sample3">Password</label>
+        </div>
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="password" id="confirmPassword" name="confirmPassword" autocomplete="off"
+                required>
+            <label class="mdl-textfield__label" for="sample4">Confirm password</label>
+        </div>
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+            Login
+        </button>
+    </form>
 
+    <div id="loadingSpinner" style="display: none;" class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+
+</div>
 
 {% endblock %}

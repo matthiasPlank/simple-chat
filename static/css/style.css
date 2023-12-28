@@ -1,6 +1,11 @@
 .page-content {
+  /*
     height: calc( 100% - 200px);
     padding: 100px 100px;
+    */ 
+    height: 100%;
+    display: flex;
+    justify-content: center;
 }
 .red-formvalidation-text{
     color: red;
@@ -9,7 +14,35 @@
 }
 
 
+/* REGISTER */
 
+#registerContainer{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#registerForm{
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+}
+
+/* LOGIN */
+
+#loginContainer{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#loginForm{
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+}
 
 
 /*  CHAT  */ 
@@ -25,19 +58,27 @@
     height: 100%;
     display: flex;
     flex-direction: column; 
+    max-width: 1920px;
 }
 #messageContainer{
     height: 90%;
+    overflow: scroll;
+    padding: 12px 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 #messageInputContainer{
-    width: 100%; 
+    width: calc( 100% - 92px ) ; 
     height: 10%;
+    padding: 12px 48px;
 }
 .message{    
     padding: 4px 12px;
     border-radius: 30px;
     color: white;
     width: fit-content;
+    height: fit-content;
 }
 .messageText{
     background-color: #3F51B5;
@@ -57,6 +98,23 @@
 .messageContentContainer{
     max-width: 80%;
 }
+#messageForm{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.mdl-textfield{
+  flex-grow: 1;
+}
+.messageSending{
+  background-color: #6f82ee !important; 
+}
+#sendingMessageContainer{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
 
 
 
@@ -70,6 +128,10 @@
     width: 80px;
     height: 80px;
   }
+  .lds-spinner-sendMessage{
+    scale: 0.5;
+  }
+
   .lds-spinner div {
     transform-origin: 40px 40px;
     animation: lds-spinner 1.2s linear infinite;

@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 import re
 
 def getUsernameFromEmail(username): 
@@ -5,3 +6,7 @@ def getUsernameFromEmail(username):
     username = username[0:subIndex]; 
     username = re.sub('[\W_]+', '', username)
     return username
+
+
+def username_exists(username):
+    return User.objects.filter(username=username).exists()

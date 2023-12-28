@@ -2,6 +2,7 @@
 {% block content %}
 <script>
   async function sendMessage() {
+    if (textmessage.value == ""){return}
     let fd = new FormData();
     let token = '{{ csrf_token }}';
 
@@ -9,51 +10,82 @@
     fd.append('csrfmiddlewaretoken', token);
     try {
       messageContainer.innerHTML += `
-          <div id="sendedMessage">
+      <div id="sendedMessage">
+        <div class="myMessage">
+            <div class="messageContentContainer">
+            <span class="author">{{request.user.first_name}}:</span>
+            <div id="sendingMessageContainer">
+              <div class="messageText message messageSending"><i>${textmessage.value}</i></div>
+              <div id="loadingSpinner" class="lds-spinner lds-spinner-sendMessage">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            </div>
             <span class="gray">${formatedDate(new Date())}</span>
-            <span class="author">{{ request.user.first_name }}</span>
-            <i class="gray">${textmessage.value}</i>
+          </div>
         </div>
+      </div>
       `
+      scollToBottom("messageContainer"); 
       response = await fetch('/chat/', {
         body: fd,
         method: 'POST'
       });
-      json = await response.json(); 
-      console.log(JSON.parse(json)); 
+      json = await response.json();
+      console.log(JSON.parse(json));
       console.log("Successfull");
-      document.getElementById("sendedMessage").remove(); 
+      document.getElementById("sendedMessage").remove();
       messageContainer.innerHTML += `
-            <div>
-              <span class="gray">${formatedDate(JSON.parse(json).fields.created_at)}</span> 
-              <span class="author">{{ request.user.first_name }}</span>
-              <i>${JSON.parse(json).fields.text}</i>
+      <div class="myMessage">
+            <div class="messageContentContainer">
+            <span class="author">{{request.user.first_name}}:</span>
+            <div class="messageText message"><i>${JSON.parse(json).fields.text}</i></div>
+            <span class="gray">${formatedDate(JSON.parse(json).fields.created_at)}</span>
           </div>
-        ` 
+        </div>
+        `
+      document.getElementById("messageForm").reset();
+
     }
     catch (error) {
       console.error(error);
     }
   }
 
-  function formatedDate(date){
+  function formatedDate(date) {
     const months = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-  ];
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
 
-  const currentDate = new Date(date);
-  const month = months[currentDate.getMonth()];
-  const day = currentDate.getDate();
-  const year = currentDate.getFullYear();
+    const currentDate = new Date(date);
+    const month = months[currentDate.getMonth()];
+    const day = currentDate.getDate();
+    const year = currentDate.getFullYear();
 
-  return `[${month}. ${day}, ${year}]`;
+    return `[${month}. ${day}, ${year}]`;
+  }
+
+  function scollToBottom(containerName){
+    const element = document.getElementById(containerName);
+    element.scrollTop = element.scrollHeight;
   }
 </script>
 
 {% if request.user.is_authenticated %}
 
 <div id="chatContainer">
+
   <div id="messageContainer">
     {% for message in messages %}
     {% if message.author == request.user %}
@@ -75,16 +107,13 @@
     {% endif %}
     {% endfor %}
   </div>
-  
-
-
 
   <div id="messageInputContainer">
-    <form onsubmit="sendMessage(); return false;">
+    <form onsubmit="sendMessage(); return false;" id="messageForm">
       {% csrf_token %}
       <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
         <input class="mdl-textfield__input" name="textmessage" type="text" id="textmessage">
-        <label class="mdl-textfield__label" for="sample3">Text...</label>
+        <label class="mdl-textfield__label" for="sample3">Your Message</label>
       </div>
       <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
         send
@@ -92,9 +121,9 @@
     </form>
   </div>
 </div>
-  
-  
-  {% else %}
+
+
+{% else %}
 <div>
   <h1>You are not logged in!</h1>
   <p>You can login <a href="/login/">here</a>!</p>
@@ -102,6 +131,3 @@
 {% endif %}
 
 {% endblock%}
-
-
-<!-- ************************************************************************ -->
