@@ -73,8 +73,12 @@
     const month = months[currentDate.getMonth()];
     const day = currentDate.getDate();
     const year = currentDate.getFullYear();
+    const hours = currentDate.getHours();
+    const minutes = currentDate.getMinutes();
+    let meridiem = ""
+    hours < 12 ? meridiem = "a.m" : meridiem = "p.m"
 
-    return `${month}. ${day}, ${year}`;
+    return `${month}. ${day}, ${year},  ${hours}:${minutes} ${meridiem}`;
   }
 
   function scollToBottom(containerName){
