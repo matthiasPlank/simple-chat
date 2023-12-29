@@ -3,10 +3,14 @@
     <h1>Register Page</h1>
 
     <script>
-
         async function register(){
-          console.log("Send Form");
-        
+
+          if(email.value == "" || password.value == "" || confirmPassword.value == ""){
+            document.getElementById("wrongPasswordContainer").style.display = "block";
+                document.getElementById("errorMessage").innerHTML = "Please, fill all required fields"; 
+                return 
+          }
+
           let fd = new FormData();
           let token = '{{ csrf_token }}';
           fd.append('email', email.value);
@@ -52,28 +56,26 @@
         <p id="errorMessage" class="red-formvalidation-text">Passwords are not the same</p>
     </div>
 
-    <form onsubmit="register(); return false;" autocomplete="off" id="registerForm">
+    <form onsubmit="register(); return false;" id="registerForm">
         {% csrf_token %}
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="email" id="email" name="email" autocomplete="false" required>
+            <input class="mdl-textfield__input" type="email" id="email" name="email">
             <label class="mdl-textfield__label" for="sample2">E-Mail</label>
         </div>
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="firstName" name="firstName" autocomplete="false">
+            <input class="mdl-textfield__input" type="text" id="firstName" name="firstName">
             <label class="mdl-textfield__label" for="firstName">Fistname</label>
         </div>
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="lastName" name="lastName" autocomplete="false">
+            <input class="mdl-textfield__input" type="text" id="lastName" name="lastName" >
             <label class="mdl-textfield__label" for="lastName">Lastname</label>
         </div>
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="password" id="password" name="password" autocomplete="off"
-                required>
+            <input class="mdl-textfield__input" type="password" id="password" name="password" >
             <label class="mdl-textfield__label" for="sample3">Password</label>
         </div>
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="password" id="confirmPassword" name="confirmPassword" autocomplete="off"
-                required>
+            <input class="mdl-textfield__input" type="password" id="confirmPassword" name="confirmPassword">
             <label class="mdl-textfield__label" for="sample4">Confirm password</label>
         </div>
         <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">

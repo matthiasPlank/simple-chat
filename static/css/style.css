@@ -62,7 +62,7 @@
 }
 #messageContainer{
     height: 90%;
-    overflow: scroll;
+    overflow-y: auto;
     padding: 12px 48px;
     display: flex;
     flex-direction: column;

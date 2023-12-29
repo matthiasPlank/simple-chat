@@ -9,7 +9,8 @@ from chat.models import Message, Chat
 from chat.functions import getUsernameFromEmail, username_exists
 
 """
-Chat View 
+Chat View - Login is required an redirects to login page if user is not logged in. Anywhere user gets Chat HTML Page for a GET request. For a POST request user creates a new message in 
+DB and returns the message Object as an JSO. 
 """
 @login_required(login_url='/login/')
 def index(request): 
@@ -23,7 +24,7 @@ def index(request):
 
 
 """
-Login View 
+Login View - Returns the HTML Login Template for a GET request. For a POST request user try to loggin in. If sucessfull, user redirects to chat. 
 """
 def login_view(request): 
     if request.user.is_authenticated:
@@ -48,7 +49,7 @@ def login_view(request):
 
 
 """
-Register View 
+Register View - Returns the HTML register template for a GET request. For a POST request user try to register. If sucessfull, user logged in and  redirects to chat. 
 """
 def register_view(request):
     if request.method == 'POST':
