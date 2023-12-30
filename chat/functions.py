@@ -10,3 +10,7 @@ def getUsernameFromEmail(username):
 
 def username_exists(username):
     return User.objects.filter(username=username).exists()
+
+
+def email_exists(username):
+    return User.objects.filter(email=username).exists()

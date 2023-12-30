@@ -15,7 +15,10 @@ DB and returns the message Object as an JSO.
 @login_required(login_url='/login/')
 def index(request): 
     if request.method == 'POST':
-        myChat = Chat.objects.get(id=1)
+        try:
+            myChat = Chat.objects.get(id=1)
+        except: 
+            myChat = Chat.objects.create(id=1)
         newMessage = Message.objects.create(text=request.POST['textmessage'] , chat=myChat , author=request.user , receiver=request.user); 
         serializedObject = serializers.serialize('json' , [newMessage]); 
         return JsonResponse(serializedObject[1:-1], safe=False)
@@ -31,8 +34,12 @@ def login_view(request):
         return HttpResponseRedirect("/chat/")
     redirect = request.GET.get('next')
     if request.method == 'POST':
-        if username_exists(request.POST['username']):
-            user = authenticate(username=request.POST['username'], password=request.POST['password'])
+        if '@' in request.POST['username']: 
+            username_for_login = getUsernameFromEmail(request.POST['username'])
+        else: 
+            username_for_login = request.POST['username']
+        if username_exists(username_for_login):
+            user = authenticate(username=username_for_login, password=request.POST['password'])
             if user: 
                 login(request, user)
                 return HttpResponseRedirect("/chat/")
